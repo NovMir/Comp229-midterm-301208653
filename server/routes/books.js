@@ -7,19 +7,19 @@ let mongoose = require('mongoose');
 let book = require('../models/books');
 
 /* GET books List page. READ */
-router.get('/', (req, res, next) => {
-  // find all books in the books collection
-  book.find()
-    .then(books => {
-      res.render('books/index', {
-        title: 'Books',
-        books: books
-      });
-    })
-    .catch(err => {
-      console.error(err);
+router.get('/', async (req, res, next) => {
+  try {
+    // find all books in the books collection
+    const books = await book.find();
+    res.render('books/index', {
+      title: 'Books',
+      books: books
     });
+  } catch(err) {
+    console.error(err);
+  }
 });
+
 
 
 //  GET the Book Details page in order to add a new Book
