@@ -9,19 +9,18 @@ let book = require('../models/books');
 /* GET books List page. READ */
 router.get('/', (req, res, next) => {
   // find all books in the books collection
-  book.find( (err, books) => {
-    if (err) {
-      return console.error(err);
-    }
-    else {
+  book.find()
+    .then(books => {
       res.render('books/index', {
         title: 'Books',
         books: books
       });
-    }
-  });
-
+    })
+    .catch(err => {
+      console.error(err);
+    });
 });
+
 
 //  GET the Book Details page in order to add a new Book
 router.get('/add', (req, res, next) => {
