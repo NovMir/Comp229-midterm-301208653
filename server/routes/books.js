@@ -32,29 +32,28 @@ res.render('books/details',{title:'Add Book', books:''})
 });
 
 // POST process the Book Details page and create a new Book - CREATE
-router.post('/add', (req, res, next) => {
+router.post('/add', async (req, res, next) => {
+  // create a new book object
+  let newBook = new book({
+    "Title": req.body.Title,
+    "Author": req.body.Author,
+    "Price": req.body.Price,
+    "Genre": req.body.Genre,
+    "Type": req.body.Type,
+  });
 
-    /*****************
-     * ADD CODE HERE *
-     *****************/
-let newBook = book({
-  "Title": req.body.Title,
-  "Author":req.body.Author,
-  "Price": req.body.Price,
-  "Genre":req.body.Genre,
-  "Type":req.body.Type,
-});
-
-book.create(newBook, (err, book) =>{
-  if (err){
+  try {
+    // try to create a new book
+    await book.create(newBook);
+    // if successful, redirect to the books page
+    res.redirect('/books');
+  } catch (err) {
+    // if there was an error, log it and end the response
     console.log(err);
     res.end(err);
   }
-  else {
-    res.redirect('/books');
-  }
-})
 });
+
 
 // GET the Book Details page in order to edit an existing Book
 router.get('/:id', (req, res, next) => {
