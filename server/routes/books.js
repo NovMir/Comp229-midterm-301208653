@@ -57,15 +57,10 @@ router.post('/add', async (req, res, next) => {
 
 // GET the Book Details page in order to edit an existing Book
 router.get('/:id', async (req, res, next) => {
-
   let id = req.params.id;
-
   try {
     let bookToEdit = await book.findById(id);
-
-    //show edit page
-    res.render('books/details',{title: 'Edit Book', books: bookToEdit});
-    
+    res.render('books/details', { title: 'Edit Book', books: bookToEdit });
   } catch (err) {
     console.log(err);
     res.end(err);
@@ -73,50 +68,41 @@ router.get('/:id', async (req, res, next) => {
 });
 
 
+
 // POST - process the information passed from the details form and update the document
-router.post('/:id', (req, res, next) => {
+router.post('/:id', async (req, res, next) => {
+  let id = req.params.id
+  let updatedBook = {
+    "_id" : id,
+    "Title": req.body.Title,
+    "Author": req.body.Author,
+    "Price": req.body.Price,
+    "Genre": req.body.Genre,
+    "Type": req.body.Type,
+  };
 
-    /*****************
-     * ADD CODE HERE *
-     *****************/
-let id = req.params.id
-let updatedBook = book({
-"_id" : id,
-"Title": req.body.Title,
-  "Author":req.body.Author,
-  "Price": req.body.Price,
-  "Genre":req.body.Genre,
-  "Type":req.body.Type,
-
-})
-book.updateOne({_id: id},updatedBook,(err) =>{
-  if(err)
-  {
+  try {
+    await book.updateOne({_id: id}, updatedBook);
+    res.redirect('/books');
+  } catch (err) {
     console.log(err);
     res.end(err);
-  }else{
-    res.redirect('/books');
   }
-})
 });
+
 
 // GET - process the delete by user id
-router.get('/delete/:id', (req, res, next) => {
-
-    /*****************
-     * ADD CODE HERE *
-     *****************/
-    let id = req.params.id;
-
-    book.remove({_id:id}, (err) => {
-      if(err){
-        console.log(err);
-        res.end(err);
-      } else{
-        res.redirect('/books');
-      }
-    })
+router.get('/delete/:id', async (req, res, next) => {
+  let id = req.params.id;
+  try {
+    await book.deleteOne({_id: id});
+    res.redirect('/books');
+  } catch (err) {
+    console.log(err);
+    res.end(err);
+  }
 });
+
 
 
 module.exports = router;
